@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_profiles_picture")
 public class ProfilesPicture {
+    @Serial
+    private static final long serialVersionUID =  1890258658838804132L;
 
     /**
      *

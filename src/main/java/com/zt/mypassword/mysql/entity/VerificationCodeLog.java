@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_verification_code_log")
 public class VerificationCodeLog {
+    @Serial
+    private static final long serialVersionUID =  1890258658838804136L;
     /**
      * 主键
      */

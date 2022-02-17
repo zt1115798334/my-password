@@ -39,9 +39,9 @@ public class InheritServiceImpl implements InheritService {
     @Override
     public String login(PasswordToken token, String verificationCode, String ip) {
         Long ipLong = NetworkUtil.ipToLong(ip);
-        if (!verificationCodeService.validateVerificationCode(token.getUsername(), verificationCode, VerificationCodeType.LOGIN)) {
-            throw new OperationException("验证码不正确");
-        }
+//        if (!verificationCodeService.validateVerificationCode(token.getUsername(), verificationCode, VerificationCodeType.LOGIN)) {
+//            throw new OperationException("验证码不正确");
+//        }
         SecurityUtils.getSubject().login(token);
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         Long userId = user.getId();

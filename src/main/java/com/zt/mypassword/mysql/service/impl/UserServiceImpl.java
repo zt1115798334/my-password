@@ -168,6 +168,7 @@ public class UserServiceImpl implements UserService {
         if (searchUserDto.getEnabledState() != null) {
             jpaQuery.where(qUser.enabledState.eq(searchUserDto.getEnabledState()));
         }
+//        jpaQuery.fetchCount()
         QueryResults<UserDto> queryResults = jpaQuery
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

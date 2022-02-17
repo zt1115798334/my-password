@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 /**
@@ -25,6 +26,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_user")
 public class User {
+    @Serial
+    private static final long serialVersionUID =  1890258658838804134L;
     /**
      * 主键
      */
@@ -62,10 +65,6 @@ public class User {
      */
     @Enumerated(EnumType.STRING)
     private EnabledState enabledState;
-    /**
-     * 头像Id
-     */
-    private Long profilesPictureId;
     /**
      * 创建时间
      */

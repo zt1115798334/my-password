@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 
@@ -23,6 +24,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_user_log")
 public class UserLog {
+    @Serial
+    private static final long serialVersionUID =  1890258658838804135L;
     /**
      * 主键
      */

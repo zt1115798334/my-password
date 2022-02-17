@@ -3,6 +3,7 @@ package com.zt.mypassword.mysql.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 
@@ -17,6 +18,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "t_permission")
 public class Permission {
+    @Serial
+    private static final long serialVersionUID =  1890258658838804131L;
     /**
      * 主键
      */

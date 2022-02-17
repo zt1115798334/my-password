@@ -5,20 +5,19 @@ use `my-password`;
 drop table if exists t_user;
 create table t_user
 (
-    id                  bigint auto_increment
+    id              bigint auto_increment
         primary key,
-    account             varchar(20)                                           not null comment '账户',
-    password            varchar(255)                                          not null comment '密码',
-    salt                varchar(255)                                          not null comment '盐',
-    user_name           varchar(20)                                           null comment '用户名',
-    phone               varchar(100)                                          null comment '手机号',
-    account_type        enum ('ADMIN','ORDINARY')                             not null comment '账户类型',
-    enabled_state       enum ('OFF','ON')           default 'ON'              not null comment '开启状态 ',
-    profiles_picture_id bigint                                                null comment '头像Id',
-    created_time        datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
-    updated_time        datetime                                              null comment '更新时间',
-    last_login_time     datetime                                              null comment '最后登录时间',
-    delete_state        enum ('UN_DELETE','DELETE') default 'UN_DELETE'       not null comment '删除状态'
+    account         varchar(20)                                           not null comment '账户',
+    password        varchar(255)                                          not null comment '密码',
+    salt            varchar(255)                                          not null comment '盐',
+    user_name       varchar(20)                                           null comment '用户名',
+    phone           varchar(100)                                          null comment '手机号',
+    account_type    enum ('ADMIN','ORDINARY')                             not null comment '账户类型',
+    enabled_state   enum ('OFF','ON')           default 'ON'              not null comment '开启状态 ',
+    created_time    datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updated_time    datetime                                              null comment '更新时间',
+    last_login_time datetime                                              null comment '最后登录时间',
+    delete_state    enum ('UN_DELETE','DELETE') default 'UN_DELETE'       not null comment '删除状态'
 )
     comment '用户表' collate = utf8_unicode_ci;
 
@@ -90,28 +89,40 @@ values ('首页-显示', '首页', 'index:show', 'DISPLAY', '/api/index/**', '/h
        ('文件库-下载', '下载', 'user:delete', 'OPERATION', '/api/library/exportLibrary', null, null, 1, now()),
        ('文件库-删除', '删除', 'user:delete', 'OPERATION', '/api/library/deleteLibrary', null, null, 1, now());
 
-
 drop table if exists t_tab;
 create table t_tab
 (
     id           bigint auto_increment primary key,
+    user_id      bigint                                                not null comment '用户ID',
     name         varchar(50)                                           not null comment '名称',
     colour       varchar(50)                                           not null comment '颜色',
     info_class   enum ('SYSTEM','CUSTOM')                              not null comment '信息等级',
     created_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     updated_time datetime                                              null comment '更新时间',
     delete_state enum ('UN_DELETE','DELETE') default 'UN_DELETE'       not null comment '删除状态'
-
 ) comment '标签表' collate = utf8_unicode_ci;
+
 
 drop table if exists t_profiles_picture;
 create table t_profiles_picture
 (
     id           bigint auto_increment primary key,
+    user_id      bigint                                                not null comment '用户ID',
     path         varchar(500)                                          not null comment '路径',
     created_time datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     delete_state enum ('UN_DELETE','DELETE') default 'UN_DELETE'       not null comment '删除状态'
 ) comment '头像表';
 
-
-
+drop table if exists t_safe_deposit_box;
+create table t_safe_deposit_box
+(
+    id            bigint auto_increment primary key,
+    user_id       bigint                                                not null comment '用户ID',
+    safe_name     varchar(50)                                           not null comment '安全名称',
+    safe_account  varchar(50)                                           not null comment '安全账户',
+    safe_password varchar(50)                                           not null comment '颜色',
+    deposit_type  enum ('BANK_CARD','COMMON')                           not null comment '信息等级',
+    created_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
+    updated_time  datetime                                              null comment '更新时间',
+    delete_state  enum ('UN_DELETE','DELETE') default 'UN_DELETE'       not null comment '删除状态'
+) comment '保险箱表' collate = utf8_unicode_ci;

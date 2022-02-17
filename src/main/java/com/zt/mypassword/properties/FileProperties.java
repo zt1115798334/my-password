@@ -19,22 +19,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "custom.file")
 public class FileProperties {
 
-    private String zipPath;
-
-    private String wordPath;
-
-    private String pdfPath;
-
-    private String textPath;
-
-    private String galleryPath;
-
-    private String galleryCompressPath;
-
-    private String tempPath;
-
-    private String dicPath;
-
     private String profilesPicturePath;
 
 }

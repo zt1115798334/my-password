@@ -1,1 +1,69 @@
+server:
+  port: 8899
+spring:
+  application:
+    name: my-password
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://${SPRING_DATASOURCE_URL_HOST:127.0.0.1}:3306/${SPRING_DATASOURCE_URL_DB:my-password}?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&&serverTimezone=Hongkong
+    username: root
+    password: root
+    hikari:
+      connection-timeout: 0
+      minimum-idle: 10
+      maximum-pool-size: 30
+      auto-commit: true
+      idle-timeout: 600000
+      max-lifetime: 28740000
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    open-in-view: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: Abc@12345678
+    timeout: 300s
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 30
+        max-wait: 10s
+        min-idle: 10
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 'loggers'
+  endpoint:
+    health:
+      show-details: always
+logging:
+  file:
+    path: /logs/${spring.application.name}
+  level:
+    com.zkdj.management.external.ManagementStorageService: info
+    com.querydsl.jpa.impl.JPAQuery: debug
+custom:
+  account:
+    first-error-account-lock-time: 3 #账户密码输入错误 锁定时间 单位：分钟
+    first-error-account-error-count: 5 #账户密码输入错误 最大次数
+    second-error-account-lock-time: 30 #账户密码输入错误 锁定时间 单位：分钟
+    second-error-account-error-count: 10 #账户密码输入错误 最大次数
+    third-error-account-lock-time: 3 #账户密码输入错误 锁定时间 单位：小时
+    third-error-account-error-count: 15 #账户密码输入错误 最大次数
+    private-key: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApf/enF9BB6prdyfJIErRDpnZlsVrSDXrSE1fns/kDPkjFmlw8TeqzPDitVSZhDN+4MOiusiT+5DT43YSxQI1dQIDAQABAkAk3Im5XamaIyzT++C8rAB6Zo2b3mDxWw/RMWVPZci1XG3jZ9D/f2vFJhk8cHPHCkxIfGX5dceUw3C6UgPOGvuhAiEA1WkOCuq7n/RBAWpQRW7oJk79bwkp1KJ2UQYPRkeN9tkCIQDHIKKd7HFTJwoCSLfN6K66je1r5i+bioQVPiNn68Cp/QIhAI2RskoVqz+R1amtr/BPgVsgXUjSSFiRKXHYVjul7gwJAiBHFI031kj1p7/Y5OBHrkGA8lzH4VkpKp7PfmjhFbSmeQIhAICzeZ5qwy3FJ5oZvTjXZPQkknKrWoGwIguBiVtSGnN+
+  file:
+    profiles-picture-path: /file/profilesPicture
+  secret-key:
+    public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALZW6GKyiCSpyMbWoWCwQRnqas/JG7vbN9eTA4BhSTED9KwCC7Ysz45YPS8eEoNspXgpIewONZnwuTjDQRYaBeUCAwEAAQ==
+    private-key: MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAtlboYrKIJKnIxtahYLBBGepqz8kbu9s315MDgGFJMQP0rAILtizPjlg9Lx4Sg2yleCkh7A41mfC5OMNBFhoF5QIDAQABAkBPsnrOMOSKyd8k8ckFfuRllG1tNqS1nmKxCeP86Ajar/aOCHAlD7BpkYxLomktBQ4ZL0xToThKVxBbkUrlDDEBAiEA9Tf7Atzhw1JrohAPxu0dhEPUX1lPhWsn8EiVdk+qlUECIQC+WzNZ+7YCpr1NvkVZSuokBHYHI3BSC2G57WcQqxQTpQIgKXYqqeRBA+6GpmNC16a16+wwF2MZb/ybRyRuqQ91T0ECIDLS8uEBndUTY9PQC4ANynoXXtQFGEYvl8YmprACnXepAiBXafLWdOM8IlXyJ1Khwlz+8CvbbR5ow9Tw+re3ctgw+w==
+    prefix: zkdj
+    suffix: zt
+
 

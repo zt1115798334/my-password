@@ -27,6 +27,5 @@ public class VerificationCodeLogServiceImpl implements VerificationCodeLogServic
     public void saveVerificationCodeLog(VerificationCodeLog verificationCodeLog) {
         verificationCodeLog.setCreatedTime(LocalDateTime.now());
          verificationCodeLogRepository.save(verificationCodeLog);
-
     }
 }

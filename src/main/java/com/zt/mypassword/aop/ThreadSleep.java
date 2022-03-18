@@ -4,6 +4,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,5 +25,5 @@ public @interface ThreadSleep {
 
     long expired() default 1;
 
-    TimeUnit timeUnit() default TimeUnit.HOURS;
+    ChronoUnit timeUnit() default  ChronoUnit.HOURS;
 }

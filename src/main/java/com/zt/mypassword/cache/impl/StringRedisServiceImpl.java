@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -60,9 +61,9 @@ public class StringRedisServiceImpl implements StringRedisService {
     }
 
     @Override
-    public void setContainExpire(String key, String value, long timeout, TimeUnit unit) {
+    public void setContainExpire(String key, String value, Duration unit) {
         ValueOperations<String, String> valueOperations = stringRedisTemplate.opsForValue();
-        valueOperations.set(key, value, timeout, unit);
+        valueOperations.set(key, value, unit);
     }
 
     @Override

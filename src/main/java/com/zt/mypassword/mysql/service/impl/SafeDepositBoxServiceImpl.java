@@ -1,16 +1,25 @@
 package com.zt.mypassword.mysql.service.impl;
 
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.PagedList;
+import com.blazebit.persistence.querydsl.BlazeJPAQuery;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.zt.mypassword.dto.PageDto;
+import com.zt.mypassword.dto.SafeDepositBoxDto;
+import com.zt.mypassword.dto.SearchSafeDepositBoxDto;
 import com.zt.mypassword.enums.DeleteState;
 import com.zt.mypassword.exception.custom.OperationException;
+import com.zt.mypassword.mysql.entity.QSafeDepositBox;
 import com.zt.mypassword.mysql.entity.SafeDepositBox;
 import com.zt.mypassword.mysql.repo.SafeDepositBoxRepository;
 import com.zt.mypassword.mysql.service.SafeDepositBoxService;
+import com.zt.mypassword.mysql.utils.PageUtils;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,6 +35,10 @@ import java.util.Optional;
 public class SafeDepositBoxServiceImpl implements SafeDepositBoxService {
 
     private SafeDepositBoxRepository safeDepositBoxRepository;
+
+    private final EntityManager entityManager;
+
+    private final CriteriaBuilderFactory criteriaBuilderFactory;
 
     @Override
     public SafeDepositBox saveSafeDepositBox(SafeDepositBox safeDepositBox) {
@@ -50,15 +63,15 @@ public class SafeDepositBoxServiceImpl implements SafeDepositBoxService {
         safeDepositBoxOptional
                 .filter(safeDepositBox -> safeDepositBox.getUserId().equals(userId))
                 .ifPresent(safeDepositBox -> {
-            safeDepositBox.setDeleteState(DeleteState.DELETE);
-            safeDepositBoxRepository.save(safeDepositBox);
-        });
+                    safeDepositBox.setDeleteState(DeleteState.DELETE);
+                    safeDepositBoxRepository.save(safeDepositBox);
+                });
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public Optional<SafeDepositBox> findByIdNotDel(Long id) {
-        return safeDepositBoxRepository.findByIdAndDeleteState(id,DeleteState.UN_DELETE);
+        return safeDepositBoxRepository.findByIdAndDeleteState(id, DeleteState.UN_DELETE);
     }
 
     @Override
@@ -70,7 +83,23 @@ public class SafeDepositBoxServiceImpl implements SafeDepositBoxService {
     }
 
     @Override
-    public Page<SafeDepositBox> findSafeDepositBoxPage(Long userId, PageDto pageDto) {
-        return null;
+    public PagedList<SafeDepositBox> findSafeDepositBoxPage(Long userId,SearchSafeDepositBoxDto searchSafeDepositBoxDto) {
+        QSafeDepositBox qSafeDepositBox = QSafeDepositBox.safeDepositBox;
+        BlazeJPAQuery<SafeDepositBox> jpaQuery = new BlazeJPAQuery<Tuple>(entityManager, criteriaBuilderFactory)
+                .from(qSafeDepositBox)
+                .select(Projections.bean(
+                        SafeDepositBox.class,
+                        qSafeDepositBox.id,
+                        qSafeDepositBox.safeName,
+                        qSafeDepositBox.safeAccount,
+                        qSafeDepositBox.safePassword,
+                        qSafeDepositBox.depositType,
+                        qSafeDepositBox.updatedTime)
+                );
+        jpaQuery.where(qSafeDepositBox.deleteState.eq(DeleteState.UN_DELETE));
+        jpaQuery.where(qSafeDepositBox.userId.eq(userId));
+        jpaQuery.orderBy(qSafeDepositBox.createdTime.desc());
+        jpaQuery.orderBy(qSafeDepositBox.id.asc());
+        return jpaQuery.fetchPage(PageUtils.getOffset(searchSafeDepositBoxDto.getPageNumber(), searchSafeDepositBoxDto.getPageSize()), searchSafeDepositBoxDto.getPageSize());
     }
 }

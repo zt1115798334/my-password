@@ -1,5 +1,6 @@
 package com.zt.mypassword.controller;
 
+import com.blazebit.persistence.PagedList;
 import com.zt.mypassword.aop.SaveLog;
 import com.zt.mypassword.base.user.CurrentUser;
 import com.zt.mypassword.dto.*;
@@ -85,8 +86,8 @@ public class UserController extends BaseResultMessage implements CurrentUser {
     @ApiOperation(value = "分页查找用户")
     @PostMapping(value = "findUserPage", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultMessage findUserPage(@Validated @RequestBody SearchUserDto searchUserDto) {
-        Page<UserDto> userDtoPage = userService.findUserPage(searchUserDto);
-        return success(searchUserDto.getPageNumber(), searchUserDto.getPageSize(), userDtoPage.getTotalElements(), userDtoPage.getContent());
+        PagedList<UserDto> userDtoPagedList = userService.findUserPage(searchUserDto);
+        return success(searchUserDto.getPageNumber(), searchUserDto.getPageSize(), userDtoPagedList.getTotalSize(), userDtoPagedList);
     }
 
     @ApiOperation(value = "分页查找用户日志")

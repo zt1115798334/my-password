@@ -18,4 +18,6 @@ public @interface SaveLog {
     String desc() default "无信息";
 
     boolean containUser() default true;
+
+    boolean encryption() default false;
 }

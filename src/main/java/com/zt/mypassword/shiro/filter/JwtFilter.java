@@ -1,5 +1,6 @@
 package com.zt.mypassword.shiro.filter;
 
+import cn.hutool.core.net.NetUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zt.mypassword.cache.StringRedisService;
@@ -25,6 +26,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
@@ -95,7 +97,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         String token = Optional.ofNullable(requestHeaders.get("authorization")).orElse("Bearer ").substring(7);
         Long userId = JwtUtils.getUserId(token);
         String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = NetUtil.ipv4ToLong(ip);
 
         String jwtAccessTokenKey = CacheKeys.getJwtAccessTokenKey(userId, ipLong);
         String jwtRefreshTokenKey = CacheKeys.getJwtRefreshTokenKey(userId, ipLong);
@@ -108,8 +110,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 String accessToken = JwtUtils.generateAccessToken(user);
                 String refreshToken = JwtUtils.generateRefreshToken(user);
                 //token 存储redis
-                stringRedisService.setContainExpire(jwtAccessTokenKey, accessToken, JwtUtils.ACCESS_EXPIRATION, JwtUtils.ACCESS_TIMEUNIT);
-                stringRedisService.setContainExpire(jwtRefreshTokenKey, refreshToken, JwtUtils.REFRESH_EXPIRATION, JwtUtils.REFRESH_TIMEUNIT);
+                stringRedisService.setContainExpire(jwtAccessTokenKey, accessToken, Duration.of( JwtUtils.ACCESS_EXPIRATION, JwtUtils.ACCESS_TIMEUNIT));
+                stringRedisService.setContainExpire(jwtRefreshTokenKey, refreshToken,  Duration.of(JwtUtils.REFRESH_EXPIRATION, JwtUtils.REFRESH_TIMEUNIT));
                 //发送新的token
                 JSONObject tokenJSON = new JSONObject();
                 tokenJSON.put("accessToken", accessToken);

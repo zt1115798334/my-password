@@ -14,6 +14,8 @@ create table t_user
     phone           varchar(100)                                          null comment '手机号',
     account_type    enum ('ADMIN','ORDINARY')                             not null comment '账户类型',
     enabled_state   enum ('OFF','ON')           default 'ON'              not null comment '开启状态 ',
+    rsa_private_key varchar(255)                                          null comment '私钥',
+    rsa_publish_key varchar(255)                                          null comment '公钥',
     created_time    datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     updated_time    datetime                                              null comment '更新时间',
     last_login_time datetime                                              null comment '最后登录时间',
@@ -23,7 +25,7 @@ create table t_user
 
 INSERT INTO t_user (id, account, password, salt, user_name, phone, account_type,
                     enabled_state, created_time, updated_time, last_login_time, delete_state)
-VALUES (1, '12911855304', 'f9f81c58749ca8d68afc209d6c37e5236ac038ce', '7bb244443f7e9e85', 'test', null, 'ADMIN',
+VALUES (1, '15600663638', 'bceabea40218894a72dabcec298c1b5d4ae8ccc3', 'VeW9A05/+rI=', 'test', null, 'ADMIN',
         'ON', '2021-09-13 17:32:25', null, null, 'UN_DELETE');
 
 drop table if exists t_user_log;
@@ -120,7 +122,7 @@ create table t_safe_deposit_box
     user_id       bigint                                                not null comment '用户ID',
     safe_name     varchar(50)                                           not null comment '安全名称',
     safe_account  varchar(50)                                           not null comment '安全账户',
-    safe_password varchar(50)                                           not null comment '颜色',
+    safe_password varchar(50)                                           not null comment '安全密码',
     deposit_type  enum ('BANK_CARD','COMMON')                           not null comment '信息等级',
     created_time  datetime                    default CURRENT_TIMESTAMP not null comment '创建时间',
     updated_time  datetime                                              null comment '更新时间',

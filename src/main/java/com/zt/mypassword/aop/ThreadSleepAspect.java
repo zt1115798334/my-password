@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.util.Optional;
 
 @Aspect
@@ -51,12 +52,12 @@ public class ThreadSleepAspect {
         final String redisFinalKey = "thread_sleep" + ":" + targetClassName + keyVal;
         Optional<String> valueOpt = stringRedisService.get(redisFinalKey);
         if (valueOpt.isPresent()) { //这块是判空
-            Long expireTime = stringRedisService.expireTime( redisFinalKey);
+            Long expireTime = stringRedisService.expireTime(redisFinalKey);
             throw new OperationException("当前请求相当消耗资源，请" + DateUtils.printHourMinuteSecond(expireTime) + "后重新尝试。");
         } else {
             //存入json格式字符串到redis里
             // 序列化结果放入缓存
-            stringRedisService.setContainExpire(redisFinalKey, "1", threadSleep.expired(), threadSleep.timeUnit());
+            stringRedisService.setContainExpire(redisFinalKey, "1", Duration.of(threadSleep.expired(), threadSleep.timeUnit()));
         }
 
     }

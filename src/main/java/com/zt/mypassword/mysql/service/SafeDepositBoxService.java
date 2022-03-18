@@ -1,6 +1,9 @@
 package com.zt.mypassword.mysql.service;
 
+import com.blazebit.persistence.PagedList;
 import com.zt.mypassword.dto.PageDto;
+import com.zt.mypassword.dto.SafeDepositBoxDto;
+import com.zt.mypassword.dto.SearchSafeDepositBoxDto;
 import com.zt.mypassword.mysql.entity.SafeDepositBox;
 import org.springframework.data.domain.Page;
 
@@ -34,5 +37,5 @@ public interface SafeDepositBoxService {
 
     SafeDepositBox findSafeDepositBox(Long id, Long userId);
 
-    Page<SafeDepositBox> findSafeDepositBoxPage(Long userId, PageDto pageDto);
+    PagedList<SafeDepositBox> findSafeDepositBoxPage(Long userId, SearchSafeDepositBoxDto searchSafeDepositBoxDto);
 }

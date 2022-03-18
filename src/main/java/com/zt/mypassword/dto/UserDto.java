@@ -67,11 +67,6 @@ public class UserDto implements Serializable {
     @ApiModelProperty(value = "开启状态")
     private EnabledState enabledState;
     /**
-     * 头像Id
-     */
-    @ApiModelProperty(value = "头像Id")
-    private Long profilesPictureId;
-    /**
      * 头像路径
      */
     @ApiModelProperty(value = "头像路径")

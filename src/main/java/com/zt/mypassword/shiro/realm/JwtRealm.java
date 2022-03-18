@@ -1,8 +1,11 @@
 package com.zt.mypassword.shiro.realm;
 
+import cn.hutool.core.net.NetUtil;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zt.mypassword.cache.StringRedisService;
+import com.zt.mypassword.enums.DeleteState;
+import com.zt.mypassword.enums.SystemStatusCode;
 import com.zt.mypassword.mysql.entity.Permission;
 import com.zt.mypassword.mysql.entity.User;
 import com.zt.mypassword.mysql.service.PermissionService;
@@ -15,9 +18,6 @@ import com.zt.mypassword.shiro.exception.custom.JwtNotFunException;
 import com.zt.mypassword.shiro.exception.custom.UserNotFoundException;
 import com.zt.mypassword.shiro.token.JwtToken;
 import com.zt.mypassword.utils.JwtUtils;
-import com.zt.mypassword.utils.NetworkUtil;
-import com.zt.mypassword.enums.DeleteState;
-import com.zt.mypassword.enums.SystemStatusCode;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -72,7 +72,7 @@ public class JwtRealm extends AuthorizingRealm {
                 permissionSet.add(SystemStatusCode.USER_DELETE.getName());
             } else {
                 permissionSet.add(SystemStatusCode.USER_NORMAL.getName());
-                List<Permission> permissionList = inheritService.findPermissionByUserId(user.getId(),user.getAccountType());
+                List<Permission> permissionList = inheritService.findPermissionByUserId(user.getId(), user.getAccountType());
                 Set<String> collect = permissionList.stream()
                         .map(Permission::getPermission)
                         .filter(StringUtils::isNotEmpty)
@@ -90,14 +90,13 @@ public class JwtRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        if (!(authenticationToken instanceof JwtToken)) {
+        if (!(authenticationToken instanceof JwtToken jwtToken)) {
             return null;
         }
-        JwtToken jwtToken = (JwtToken) authenticationToken;
         String token = (String) jwtToken.getCredentials();
         Long userId = jwtToken.getUserId();
         String ip = jwtToken.getIp();
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = NetUtil.ipv4ToLong(ip);
         if (StringUtils.isNotBlank(token) && userId != null) {
             Optional<String> accessTokenOpt = stringRedisService.get(CacheKeys.getJwtAccessTokenKey(userId, ipLong));
             if (accessTokenOpt.isPresent()) {

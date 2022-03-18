@@ -1,6 +1,8 @@
 package com.zt.mypassword.service.impl;
 
+import cn.hutool.core.net.NetUtil;
 import com.zt.mypassword.cache.StringRedisService;
+import com.zt.mypassword.enums.VerificationCodeType;
 import com.zt.mypassword.exception.custom.OperationException;
 import com.zt.mypassword.mysql.entity.VerificationCodeLog;
 import com.zt.mypassword.mysql.service.VerificationCodeLogService;
@@ -9,11 +11,12 @@ import com.zt.mypassword.service.VerificationCodeService;
 import com.zt.mypassword.service.cache.CacheKeys;
 import com.zt.mypassword.utils.MStringUtils;
 import com.zt.mypassword.utils.NetworkUtil;
-import com.zt.mypassword.enums.VerificationCodeType;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +40,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
     @Override
     public void sendVerificationCode(String ip, String noticeContent, VerificationCodeType verificationCodeType) {
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = NetUtil.ipv4ToLong(ip);
         String ipCountKey = CacheKeys.getVerificationCodeIpCountKey(String.valueOf(ipLong));
         String noticeContentCountKey = CacheKeys.getVerificationCodeNoticeCountKey(noticeContent);
 
@@ -72,7 +75,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         String code = null;
         codeKey = CacheKeys.getVerificationCodeKey(verificationCodeType.name(), noticeContent);
         code = RandomStringUtils.randomNumeric(verificationCodeProperties.getCodeLen());
-        stringRedisService.setContainExpire(codeKey, code, verificationCodeProperties.getCodeExpires(), TimeUnit.MINUTES);
+        stringRedisService.setContainExpire(codeKey, code, Duration.of(verificationCodeProperties.getCodeExpires(), ChronoUnit.MINUTES));
         String smsCodeText = MStringUtils.splicingSmsCodeText(code);
 
         // TODO: 2021/11/29 发送验证码

@@ -48,4 +48,7 @@ public class PageUtils {
         return PageRequest.of(pageDto.getPageNumber() - 1, pageDto.getPageSize(), sort);
     }
 
+    public static Integer getOffset(Integer pageNumber, Integer pageSize) {
+        return (pageNumber - 1) * pageSize;
+    }
 }

@@ -1,5 +1,7 @@
 package com.zt.mypassword.shiro.realm;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
 import com.google.common.base.Objects;
 import com.zt.mypassword.cache.StringRedisService;
 import com.zt.mypassword.mysql.entity.User;
@@ -8,12 +10,10 @@ import com.zt.mypassword.properties.AccountProperties;
 import com.zt.mypassword.shiro.cache.CacheKeys;
 import com.zt.mypassword.shiro.token.PasswordToken;
 import com.zt.mypassword.shiro.utils.UserUtils;
-import com.zt.mypassword.utils.RSAUtils;
 import com.zt.mypassword.utils.DateUtils;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -55,17 +55,16 @@ public class PasswordRealm extends AuthorizingRealm {
     @SneakyThrows
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        if (!(authenticationToken instanceof PasswordToken)) {
+        if (!(authenticationToken instanceof PasswordToken token)) {
             return null;
         }
-        PasswordToken token = (PasswordToken) authenticationToken;
         String name = token.getUsername();
         String shiroLoginCountKey = CacheKeys.getShiroLoginCountKey(name);
         String shiroIsLockKey = CacheKeys.getShiroIsLockKey(name);
 
         String username = String.valueOf(token.getUsername());
 
-        String decode = new String(RSAUtils.decryptByPrivateKey(Base64.decodeBase64(String.valueOf(token.getPassword())), Base64.decodeBase64(accountProperties.getPrivateKey())));
+        String decode = SecureUtil.rsa(accountProperties.getPrivateKey(), null).decryptStr(String.valueOf(token.getPassword()), KeyType.PrivateKey);
         String password = decode.substring(username.length());
 
         Optional<String> shiroIsLock = stringRedisService.get(shiroIsLockKey);
@@ -78,7 +77,7 @@ public class PasswordRealm extends AuthorizingRealm {
 
         //密码进行加密处理  明文为  password+name
         Optional<User> userOptional = userService.findByAccountNotDel(name);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             //登录错误开始计数
             String msg = increment(shiroLoginCountKey, shiroIsLockKey);
             throw new AccountException(msg);
@@ -136,19 +135,4 @@ public class PasswordRealm extends AuthorizingRealm {
         }).orElse("帐号或密码错误！");
     }
 
-
-    public static void main(String[] args) {
-        String pub = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKX/3pxfQQeqa3cnySBK0Q6Z2ZbFa0g160hNX57P5Az5IxZpcPE3qszw4rVUmYQzfuDDorrIk/uQ0+N2EsUCNXUCAwEAAQ==";
-        String privateStr = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApf/enF9BB6prdyfJIErRDpnZlsVrSDXrSE1fns/kDPkjFmlw8TeqzPDitVSZhDN+4MOiusiT+5DT43YSxQI1dQIDAQABAkAk3Im5XamaIyzT++C8rAB6Zo2b3mDxWw/RMWVPZci1XG3jZ9D/f2vFJhk8cHPHCkxIfGX5dceUw3C6UgPOGvuhAiEA1WkOCuq7n/RBAWpQRW7oJk79bwkp1KJ2UQYPRkeN9tkCIQDHIKKd7HFTJwoCSLfN6K66je1r5i+bioQVPiNn68Cp/QIhAI2RskoVqz+R1amtr/BPgVsgXUjSSFiRKXHYVjul7gwJAiBHFI031kj1p7/Y5OBHrkGA8lzH4VkpKp7PfmjhFbSmeQIhAICzeZ5qwy3FJ5oZvTjXZPQkknKrWoGwIguBiVtSGnN+";
-        try {
-            byte[] bytes = RSAUtils.encryptByPublicKey("xiaoming1234455".getBytes(), Base64.decodeBase64(pub));
-            String st = Base64.encodeBase64String(bytes);
-            System.out.println("st = " + st);
-            String dedd = "NajjxkHrOFtHwGq2l07ICAXfyrRxDIt5LLu50GXmAdE+AFIbj3Ftlf90js03KPiE8kxQOAyfMwWyxmAKeb8sgQ==";
-            byte[] decode1 = RSAUtils.decryptByPrivateKey(Base64.decodeBase64(dedd), Base64.decodeBase64(privateStr));
-            System.out.println("解密后的数据：" + new String(decode1) + "\n\n");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

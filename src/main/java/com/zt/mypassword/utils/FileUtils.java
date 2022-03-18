@@ -1,5 +1,7 @@
 package com.zt.mypassword.utils;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.zt.mypassword.exception.custom.OperationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,21 +27,17 @@ import java.nio.file.Paths;
 @Slf4j
 public class FileUtils {
 
+   private static final Snowflake snowflake = IdUtil.getSnowflake();
 
     public static String handleFileName(String userAgent, String fileName) {
-        try {
-            if (userAgent.contains("MSIE") || userAgent.contains("TRIDENT") || userAgent.contains("EDGE")) {
-                //IE下载文件名空格变+号问题
-                fileName = URLEncoder.encode(fileName, "utf-8").replace("+", "%20");
-            } else {
-                fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
-            }
-        } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
+        if (userAgent.contains("MSIE") || userAgent.contains("TRIDENT") || userAgent.contains("EDGE")) {
+            //IE下载文件名空格变+号问题
+            fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
+        } else {
+            fileName = new String(fileName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
         }
         return fileName;
     }
-
 
 
     /**
@@ -119,11 +117,10 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
-        SnowflakeIdWorker instance = SnowflakeIdWorker.getInstance();
         if (multipartFile != null) {
             String originalFileName = multipartFile.getOriginalFilename();//原名称 带后缀
             assert originalFileName != null;
-            String filePath = writePath + File.separator + instance.nextId() + "." + originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+            String filePath = writePath + File.separator + snowflake.nextId() + "." + originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
             try {
                 if (!Files.exists(Paths.get(filePath))) {
                     Files.createFile(Paths.get(filePath));

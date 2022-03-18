@@ -1,11 +1,12 @@
 package com.zt.mypassword.shiro.utils;
 
+import cn.hutool.core.codec.Base64;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.digest.Digester;
 import com.google.common.base.Objects;
-import com.zt.mypassword.mysql.entity.User;
-import com.zt.mypassword.utils.Digests;
-import com.zt.mypassword.utils.Encodes;
 import com.zt.mypassword.enums.DeleteState;
 import com.zt.mypassword.enums.EnabledState;
+import com.zt.mypassword.mysql.entity.User;
 
 
 /**
@@ -21,7 +22,7 @@ public class UserUtils {
         String result = "";
         if (Objects.equal(user.getDeleteState(), DeleteState.DELETE)) {
             result = "账户已被删除";
-        } else if (Objects.equal(user.getEnabledState(), EnabledState.OFF)){
+        } else if (Objects.equal(user.getEnabledState(), EnabledState.OFF)) {
             result = "账户已被禁用";
         }
         return result;
@@ -37,8 +38,10 @@ public class UserUtils {
      * @return String
      */
     public static String getEncryptPassword(String account, String password, String salt) {
-        byte[] hashPassword = Digests.sha1((account + password).getBytes(), Encodes.decodeHex(salt), Digests.HASH_INTERATIONS);
-        return Encodes.encodeHex(hashPassword);
+        Digester digester = SecureUtil.sha1();
+        digester.setSalt(Base64.decode(salt));
+        return digester.digestHex(account + password);
     }
+
 
 }

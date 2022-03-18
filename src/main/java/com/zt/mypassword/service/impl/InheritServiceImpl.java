@@ -1,5 +1,6 @@
 package com.zt.mypassword.service.impl;
 
+import cn.hutool.core.net.NetUtil;
 import com.zt.mypassword.cache.StringRedisService;
 import com.zt.mypassword.enums.AccountType;
 import com.zt.mypassword.enums.VerificationCodeType;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -38,7 +40,7 @@ public class InheritServiceImpl implements InheritService {
 
     @Override
     public String login(PasswordToken token, String verificationCode, String ip) {
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = NetUtil.ipv4ToLong(ip);
 //        if (!verificationCodeService.validateVerificationCode(token.getUsername(), verificationCode, VerificationCodeType.LOGIN)) {
 //            throw new OperationException("验证码不正确");
 //        }
@@ -51,8 +53,8 @@ public class InheritServiceImpl implements InheritService {
         String jwtAccessTokenKey = CacheKeys.getJwtAccessTokenKey(userId, ipLong);
         String jwtRefreshTokenKey = CacheKeys.getJwtRefreshTokenKey(userId, ipLong);
         //token 存储redis
-        stringRedisService.setContainExpire(jwtAccessTokenKey, accessToken, JwtUtils.ACCESS_EXPIRATION, JwtUtils.ACCESS_TIMEUNIT);
-        stringRedisService.setContainExpire(jwtRefreshTokenKey, refreshToken, JwtUtils.REFRESH_EXPIRATION, JwtUtils.REFRESH_TIMEUNIT);
+        stringRedisService.setContainExpire(jwtAccessTokenKey, accessToken, Duration.of(JwtUtils.ACCESS_EXPIRATION, JwtUtils.ACCESS_TIMEUNIT) );
+        stringRedisService.setContainExpire(jwtRefreshTokenKey, refreshToken, Duration.of( JwtUtils.REFRESH_EXPIRATION, JwtUtils.REFRESH_TIMEUNIT));
         return accessToken;
     }
 
@@ -63,7 +65,7 @@ public class InheritServiceImpl implements InheritService {
 
     @Override
     public void logout(Long userId, String ip) {
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = NetUtil.ipv4ToLong(ip);
         stringRedisService.delete(CacheKeys.getJwtAccessTokenKey(userId, ipLong));
         stringRedisService.delete(CacheKeys.getJwtRefreshTokenKey(userId, ipLong));
         SecurityUtils.getSubject().logout();

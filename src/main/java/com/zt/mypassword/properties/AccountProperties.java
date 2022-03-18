@@ -32,4 +32,6 @@ public class AccountProperties {
 
     private String privateKey;
 
+    private String publishKey;
+
 }

@@ -1,15 +1,16 @@
 package com.zt.mypassword.aop;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import com.alibaba.fastjson.JSONObject;
 import com.zt.mypassword.base.user.CurrentUser;
 import com.zt.mypassword.mysql.entity.User;
 import com.zt.mypassword.mysql.entity.UserLog;
 import com.zt.mypassword.mysql.service.UserLogService;
+import com.zt.mypassword.properties.SecretKeyProperties;
 import com.zt.mypassword.utils.MStringUtils;
 import com.zt.mypassword.utils.NetworkUtil;
-import com.zt.mypassword.base.user.CurrentUser;
-import com.zt.mypassword.mysql.service.UserLogService;
-import com.zt.mypassword.utils.MStringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -44,8 +45,11 @@ public class SaveLogAspect implements CurrentUser {
 
     private final UserLogService userLogService;
 
-    public SaveLogAspect(UserLogService userLogService) {
+    private final RSA rsa;
+
+    public SaveLogAspect(UserLogService userLogService, SecretKeyProperties secretKeyProperties) {
         this.userLogService = userLogService;
+        this.rsa = SecureUtil.rsa(null, secretKeyProperties.getPublicKey());
     }
 
     @Pointcut("execution( * com.zt.mypassword.controller..*.*(..)) && @annotation(logs)")
@@ -82,11 +86,12 @@ public class SaveLogAspect implements CurrentUser {
                 username = currentUser.getUserName();
             }
         }
+        String content = logs.encryption() ? rsa.encryptBase64(paramVal.get(), KeyType.PublicKey) : paramVal.get();
         UserLog userLog = UserLog.builder()
                 .userId(userId)
                 .name(username)
                 .type(desc)
-                .content(paramVal.get())
+                .content(content)
                 .ip(ip.get())
                 .time(LocalDateTime.now())
                 .classify(className.get())

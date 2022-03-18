@@ -66,6 +66,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private EnabledState enabledState;
     /**
+     * 私钥
+     */
+    private String rsaPrivateKey;
+    /**
+     * 公钥
+     */
+    private String rsaPublishKey;
+    /**
      * 创建时间
      */
     private LocalDateTime createdTime;

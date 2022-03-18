@@ -1,5 +1,6 @@
 package com.zt.mypassword.cache;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -63,10 +64,9 @@ public interface StringRedisService {
      *
      * @param key     key
      * @param value   value
-     * @param timeout 缓存时间
-     * @param unit    缓存时间单位
+     * @param unit    缓存时间
      */
-    void setContainExpire(String key, String value, long timeout, TimeUnit unit);
+    void setContainExpire(String key, String value, Duration unit);
 
     /**
      * @param key key

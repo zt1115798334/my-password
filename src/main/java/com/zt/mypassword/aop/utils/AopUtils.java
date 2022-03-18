@@ -1,6 +1,7 @@
 package com.zt.mypassword.aop.utils;
 
-import com.zt.mypassword.utils.MD5Utils;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.RSA;
 import com.zt.mypassword.utils.MStringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -25,7 +26,7 @@ public class AopUtils {
         assert parameterNames != null;
         String return_data_key = MStringUtils.parseParams(parameterNames, parameterValues);
         if (keyTransformMd5) {
-            return_data_key = MD5Utils.MD5(return_data_key);
+            return_data_key = SecureUtil.md5(return_data_key);
         }
         return key == null ? null : return_data_key;
     }

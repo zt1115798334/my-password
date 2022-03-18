@@ -1,5 +1,6 @@
 package com.zt.mypassword.mysql.service;
 
+import com.blazebit.persistence.PagedList;
 import com.zt.mypassword.dto.SearchUserDto;
 import com.zt.mypassword.dto.UserDto;
 import com.zt.mypassword.mysql.entity.User;
@@ -43,6 +44,6 @@ public interface UserService {
 
     UserDto findUser(Long id);
 
-    Page<UserDto> findUserPage(SearchUserDto searchUserDto);
+    PagedList<UserDto> findUserPage(SearchUserDto searchUserDto);
 
 }

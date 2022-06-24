@@ -55,7 +55,8 @@ public class UserServiceImpl implements UserService {
     private final CriteriaBuilderFactory criteriaBuilderFactory;
 
     @Override
-    public User saveUser(User user, Long departmentId) {
+    @Transactional(rollbackFor = RuntimeException.class)
+    public User saveUser(User user) {
         Long id = user.getId();
         if (id != null && id != 0) {
             Optional<User> userOptional = userRepository.findById(id);
@@ -146,9 +147,9 @@ public class UserServiceImpl implements UserService {
                         qProfilesPicture.path.as("profilesPicturePath"),
                         qUser.lastLoginTime
                 )).from(qUser)
-                .leftJoin(qProfilesPicture)
-//                .on(qUser.profilesPictureId.eq(qProfilesPicture.id))
+                .innerJoin(qProfilesPicture).on(qUser.id.eq(qProfilesPicture.userId))
                 .where(qUser.deleteState.eq(DeleteState.UN_DELETE))
+                .where(qProfilesPicture.enabledState.eq(EnabledState.ON))
                 .where(qUser.id.eq(id));
         return jpaQuery.fetchOne();
     }

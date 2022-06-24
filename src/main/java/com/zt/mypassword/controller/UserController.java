@@ -2,17 +2,19 @@ package com.zt.mypassword.controller;
 
 import com.blazebit.persistence.PagedList;
 import com.zt.mypassword.aop.SaveLog;
+import com.zt.mypassword.base.controller.BaseResultMessage;
+import com.zt.mypassword.base.controller.ResultMessage;
 import com.zt.mypassword.base.user.CurrentUser;
-import com.zt.mypassword.dto.*;
-import com.zt.mypassword.mysql.entity.Permission;
+import com.zt.mypassword.dto.PageDto;
+import com.zt.mypassword.dto.SearchUserDto;
+import com.zt.mypassword.dto.UserDto;
+import com.zt.mypassword.dto.UserLogDto;
+import com.zt.mypassword.enums.EnabledState;
 import com.zt.mypassword.mysql.entity.User;
 import com.zt.mypassword.mysql.entity.UserLog;
 import com.zt.mypassword.mysql.service.UserLogService;
 import com.zt.mypassword.mysql.service.UserService;
 import com.zt.mypassword.service.InheritService;
-import com.zt.mypassword.base.controller.BaseResultMessage;
-import com.zt.mypassword.base.controller.ResultMessage;
-import com.zt.mypassword.enums.EnabledState;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -22,7 +24,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,9 +54,9 @@ public class UserController extends BaseResultMessage implements CurrentUser {
 
     @ApiOperation(value = "保存用户")
     @PostMapping(value = "saveUser", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @SaveLog(desc = "保存用户")
+    @SaveLog(desc = "保存用户", encryption = true)
     public ResultMessage saveUser(@RequestBody UserDto userDto) {
-        User user = userService.saveUser(UserDto.dtoChangeEntity(userDto), userDto.getDepartmentId());
+        User user = userService.saveUser(UserDto.dtoChangeEntity(userDto));
         return success(UserDto.entityChangeDto(user));
     }
 

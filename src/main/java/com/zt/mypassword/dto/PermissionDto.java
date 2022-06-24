@@ -48,10 +48,7 @@ public class PermissionDto implements Serializable {
      * 前台地址
      */
     private String path;
-    /**
-     * 图标
-     */
-    private String icon;
+
 
     public static PermissionDto entityChangeDto(Permission permission) {
         return PermissionDto.builder()
@@ -61,7 +58,6 @@ public class PermissionDto implements Serializable {
                 .permission(permission.getPermission())
                 .permissionType(permission.getPermissionType())
                 .path(permission.getPath())
-                .icon(permission.getIcon())
                 .build();
     }
 

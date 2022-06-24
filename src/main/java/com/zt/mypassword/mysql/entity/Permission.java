@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
@@ -17,9 +18,9 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "t_permission")
-public class Permission {
+public class Permission implements Serializable {
     @Serial
-    private static final long serialVersionUID =  1890258658838804131L;
+    private static final long serialVersionUID = 1890258658838804131L;
     /**
      * 主键
      */
@@ -51,10 +52,6 @@ public class Permission {
      * 前台地址
      */
     private String path;
-    /**
-     * 图标
-     */
-    private String icon;
 
     /**
      * 创建时间

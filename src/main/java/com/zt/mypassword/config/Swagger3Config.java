@@ -69,7 +69,7 @@ public class Swagger3Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Swagger3接口文档")
+                .title("MY-PASSWORD项目接口文档")
                 .description("更多请咨询服务开发者zhang。")
                 .version("1.0")
                 .build();

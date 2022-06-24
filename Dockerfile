@@ -1,4 +1,4 @@
-FROM openjdk:8u282-oraclelinux8
+FROM openjdk:17.0.2-oraclelinux8
 MAINTAINER zt
 VOLUME /tmp
 

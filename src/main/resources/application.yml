@@ -32,9 +32,6 @@ spring:
         max-idle: 30
         max-wait: 10s
         min-idle: 10
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
 springfox:
   documentation:
     swagger-ui:

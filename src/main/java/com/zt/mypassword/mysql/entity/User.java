@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -25,9 +26,9 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "t_user")
-public class User {
+public class User implements Serializable {
     @Serial
-    private static final long serialVersionUID =  1890258658838804134L;
+    private static final long serialVersionUID = 1890258658838804134L;
     /**
      * 主键
      */

@@ -108,7 +108,7 @@ public class ResultMessage {
     }
 
     public ResultMessage correctness() {
-        Meta build = Meta.builder().success(Boolean.TRUE).code(SUCCESS.getCode()).timestamp(LocalDateTime.now()).build();
+        Meta build = Meta.builder().success(Boolean.TRUE).code(SUCCESS.getCode()).msg("success").timestamp(LocalDateTime.now()).build();
         return this.setMeta(build);
     }
 

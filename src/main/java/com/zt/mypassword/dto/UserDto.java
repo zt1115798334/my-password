@@ -78,9 +78,6 @@ public class UserDto implements Serializable {
     @ApiModelProperty(value = "最后登录时间")
     private LocalDateTime lastLoginTime;
 
-    @ApiModelProperty(value = "部门Id")
-    private Long departmentId;
-
 
     public static User dtoChangeEntity(UserDto userDto) {
         return User.builder()
@@ -90,7 +87,6 @@ public class UserDto implements Serializable {
                 .userName(userDto.getUserName())
                 .phone(userDto.getPhone())
                 .accountType(userDto.getAccountType())
-                .lastLoginTime(userDto.getLastLoginTime())
                 .build();
     }
 

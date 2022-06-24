@@ -1,0 +1,52 @@
+version: '2.0'
+services:
+  redis-server:
+    container_name: redis-server
+    image: redis
+    volumes:
+      - ./redis-server/config/redis.conf:/usr/local/etc/redis/redis.conf:rw
+      - ./redis-server/data:/data:rw
+      - /etc/localtime:/etc/localtime:rw
+    command:
+      redis-server /usr/local/etc/redis/redis.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+    restart: always
+  mysql-server:
+    container_name: mysql-server
+    image: mysql:8.0.23
+    ports:
+      - '3307:3306'
+    env_file:
+      - mysql-server/env/mysql.env
+    volumes:
+      - ./mysql-server/mysql:/var/lib/mysql
+      - ./mysql-server/conf:/etc/mysql/conf.d
+      - ./mysql-server/init/:/docker-entrypoint-initdb.d/
+      - /etc/localtime:/etc/localtime:rw
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+    restart: always
+  my-password:
+    container_name: my-password
+    image: registry.cn-hangzhou.aliyuncs.com/zt_pomp/my-password:latest
+    env_file:
+      - my-password/env/my-password.env
+    volumes:
+      - ./my-password/file:/file:rw
+      - ./my-password/logs:/logs:rw
+      - /etc/localtime:/etc/localtime:rw
+    ports:
+      - '8899:8899'
+    depends_on:
+      - redis-server
+      - mysql-server
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
+    restart: always
